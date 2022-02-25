@@ -7,7 +7,7 @@ from probabilistic_unet import ProbabilisticUnet
 from utils import l2_regularisation
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-dataset = LIDC_IDRI(dataset_location = '~/data/plidc-punet/')
+dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
 dataset_size = len(dataset)
 indices = list(range(dataset_size))
 split = int(np.floor(0.1 * dataset_size))
