@@ -27,6 +27,9 @@ for epoch in range(epochs):
     for step, (patch, mask, _) in enumerate(train_loader): 
         patch = patch.to(device)
         mask = mask.to(device)
+        print(patch.shape)
+        print(mask.shape)
+        exit()
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         elbo = net.elbo(mask)
