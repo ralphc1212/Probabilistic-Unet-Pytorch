@@ -271,7 +271,8 @@ class ProbabilisticUnet(nn.Module):
         
         print(z_posterior.shape)
 
-        self.kl = torch.mean(self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior))
+        self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
+        self.kl = torch.mean(self.kl)
 
         print(self.kl.shape)
 
