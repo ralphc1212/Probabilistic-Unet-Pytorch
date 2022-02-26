@@ -252,6 +252,7 @@ class ProbabilisticUnet(nn.Module):
         if analytic:
             #Neeed to add this to torch source code, see: https://github.com/pytorch/pytorch/issues/13545
             kl_div = kl.kl_divergence(self.posterior_latent_space, self.prior_latent_space)
+            print(kl_div.shape)
         else:
             if calculate_posterior:
                 z_posterior = self.posterior_latent_space.rsample()
@@ -268,7 +269,13 @@ class ProbabilisticUnet(nn.Module):
         criterion = nn.BCEWithLogitsLoss(size_average = False, reduce=False, reduction=None)
         z_posterior = self.posterior_latent_space.rsample()
         
+        print(z_posterior.shape)
+
         self.kl = torch.mean(self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior))
+
+        print(kl.shape)
+
+        exit()
 
         #Here we use the posterior sample sampled above
         self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=False, z_posterior=z_posterior)
