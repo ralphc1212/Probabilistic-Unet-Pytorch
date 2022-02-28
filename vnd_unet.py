@@ -106,7 +106,8 @@ class AxisAlignedConvGaussian(nn.Module):
 
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
-        dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+        # dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+
         return dist
 
 class Fcomb(nn.Module):
@@ -177,7 +178,7 @@ class Fcomb(nn.Module):
             return self.last_layer(output)
 
 
-class ProbabilisticUnet(nn.Module):
+class VNDUnet(nn.Module):
     """
     A probabilistic UNet (https://arxiv.org/abs/1806.05034) implementation.
     input_channels: the number of channels in the image (1 for greyscale and 3 for RGB)
@@ -188,7 +189,7 @@ class ProbabilisticUnet(nn.Module):
     """
 
     def __init__(self, input_channels=1, num_classes=1, num_filters=[32,64,128,192], latent_dim=6, no_convs_fcomb=4, beta=10.0):
-        super(ProbabilisticUnet, self).__init__()
+        super(VNDUnet, self).__init__()
         self.input_channels = input_channels
         self.num_classes = num_classes
         self.num_filters = num_filters
@@ -211,6 +212,7 @@ class ProbabilisticUnet(nn.Module):
         """
         if training:
             self.posterior_latent_space = self.posterior.forward(patch, segm)
+            
         self.prior_latent_space = self.prior.forward(patch)
         self.unet_features = self.unet.forward(patch,False)
 
