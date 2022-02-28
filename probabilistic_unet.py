@@ -67,7 +67,7 @@ class AxisAlignedConvGaussian(nn.Module):
         else:
             self.name = 'Prior'
         self.encoder = Encoder(self.input_channels, self.num_filters, self.no_convs_per_block, initializers, posterior=self.posterior)
-        self.conv_layer = nn.Conv2d(num_filters[-1], 2 * self.latent_dim, (1,1), stride=1)
+        self.conv_layer = nn.Conv2d(num_filters[-1], 3 * self.latent_dim, (1,1), stride=1)
         self.show_img = 0
         self.show_seg = 0
         self.show_concat = 0
@@ -102,8 +102,14 @@ class AxisAlignedConvGaussian(nn.Module):
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
 
-        print(mu_log_sigma.shape)
-        exit()
+        mu, log_sigma, p_vnd = mu_log_sigma.chunk(chunks = 3, dim = 1)
+
+        #This is a multivariate normal with diagonal covariance matrix sigma
+        #https://github.com/pytorch/pytorch/pull/11178
+        # dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+        return mu, log_sigma, p_vnd
+
+
 
         mu = mu_log_sigma[:,:self.latent_dim]
         log_sigma = mu_log_sigma[:,self.latent_dim:]
@@ -111,7 +117,9 @@ class AxisAlignedConvGaussian(nn.Module):
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
         dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+
         return dist
+
 
 class Fcomb(nn.Module):
     """

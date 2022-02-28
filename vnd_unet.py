@@ -101,14 +101,12 @@ class AxisAlignedConvGaussian(nn.Module):
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
 
-        mu = mu_log_sigma[:,:self.latent_dim]
-        log_sigma = mu_log_sigma[:,self.latent_dim:]
+        mu, log_sigma, p_vnd = mu_log_sigma.chunk(chunks = 3, dim = 1)
 
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
-        dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
-
-        return [dist, mu, log_sigma]
+        # dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+        return mu, log_sigma, p_vnd
 
 class Fcomb(nn.Module):
     """
@@ -211,9 +209,9 @@ class VNDUnet(nn.Module):
         in case training is True also construct posterior latent space
         """
         if training:
-            self.posterior_latent_space = self.posterior.forward(patch, segm)
+            self.posterior_params = self.posterior.forward(patch, segm)
 
-        self.prior_latent_space = self.prior.forward(patch)
+        self.prior_params = self.prior.forward(patch)
         self.unet_features = self.unet.forward(patch,False)
 
     def sample(self, testing=False):
@@ -222,7 +220,11 @@ class VNDUnet(nn.Module):
         and combining this with UNet features
         """
         if testing == False:
-            z_prior = self.prior_latent_space.rsample()
+            mu, log_sigma, p_vnd = self.prior_params
+            std = torch.exp(log_sigma)
+            eps = torch.randn_like(std)
+
+            z_prior = self.prior_params.rsample()
             self.z_prior_sample = z_prior
         else:
             #You can choose whether you mean a sample or the mean here. For the GED it is important to take a sample.
