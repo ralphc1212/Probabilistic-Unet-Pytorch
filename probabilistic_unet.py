@@ -91,12 +91,17 @@ class AxisAlignedConvGaussian(nn.Module):
         self.show_enc = encoding
 
         #We only want the mean of the resulting hxw image
+        print(encoding.shape)
         encoding = torch.mean(encoding, dim=2, keepdim=True)
+        print(encoding.shape)
         encoding = torch.mean(encoding, dim=3, keepdim=True)
+        print(encoding.shape)
 
         #Convert encoding to 2 x latent dim and split up for mu and log_sigma
         mu_log_sigma = self.conv_layer(encoding)
 
+        print(mu_log_sigma.shape)
+        exit()
         #We squeeze the second dimension twice, since otherwise it won't work when batch size is equal to 1
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)

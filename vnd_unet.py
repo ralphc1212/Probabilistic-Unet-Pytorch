@@ -106,9 +106,9 @@ class AxisAlignedConvGaussian(nn.Module):
 
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
-        # dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
+        dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
 
-        return dist
+        return [dist, mu, log_sigma]
 
 class Fcomb(nn.Module):
     """
@@ -212,7 +212,7 @@ class VNDUnet(nn.Module):
         """
         if training:
             self.posterior_latent_space = self.posterior.forward(patch, segm)
-            
+
         self.prior_latent_space = self.prior.forward(patch)
         self.unet_features = self.unet.forward(patch,False)
 
