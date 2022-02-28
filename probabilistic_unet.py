@@ -31,14 +31,14 @@ class Encoder(nn.Module):
             """
             input_dim = self.input_channels if i == 0 else output_dim
             output_dim = num_filters[i]
-            
+
             if i != 0:
                 layers.append(nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True))
             
             layers.append(nn.Conv2d(input_dim, output_dim, kernel_size=3, padding=int(padding)))
             layers.append(nn.ReLU(inplace=True))
 
-            for _ in range(no_convs_per_block-1):
+            for _ in range(no_convs_per_block - 1):
                 layers.append(nn.Conv2d(output_dim, output_dim, kernel_size=3, padding=int(padding)))
                 layers.append(nn.ReLU(inplace=True))
 
@@ -253,6 +253,7 @@ class ProbabilisticUnet(nn.Module):
             #Neeed to add this to torch source code, see: https://github.com/pytorch/pytorch/issues/13545
             kl_div = kl.kl_divergence(self.posterior_latent_space, self.prior_latent_space)
             print(kl_div.shape)
+            exit()
         else:
             if calculate_posterior:
                 z_posterior = self.posterior_latent_space.rsample()
@@ -268,17 +269,10 @@ class ProbabilisticUnet(nn.Module):
 
         criterion = nn.BCEWithLogitsLoss(size_average = False, reduce=False, reduction=None)
         z_posterior = self.posterior_latent_space.rsample()
-        
-        print(z_posterior.shape)
 
         self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
-        print(self.kl.shape)
 
         self.kl = torch.mean(self.kl)
-
-        print(self.kl.shape)
-
-        exit()
 
         #Here we use the posterior sample sampled above
         self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=False, z_posterior=z_posterior)
