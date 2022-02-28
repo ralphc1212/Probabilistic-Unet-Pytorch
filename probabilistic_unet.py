@@ -100,7 +100,7 @@ class AxisAlignedConvGaussian(nn.Module):
         #Convert encoding to 2 x latent dim and split up for mu and log_sigma
         mu_log_sigma = self.conv_layer(encoding)
 
-        print(conv_layer.weight.shape)
+        print(self.conv_layer.weight.shape)
         print(mu_log_sigma.shape)
         exit()
         #We squeeze the second dimension twice, since otherwise it won't work when batch size is equal to 1
