@@ -261,6 +261,8 @@ class VNDUnet(nn.Module):
 
                 print(RSV_DIM)
                 print(p_vnd.shape)
+                print(mu.shape)
+                print(log_sigma.shape)
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])
                 qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
