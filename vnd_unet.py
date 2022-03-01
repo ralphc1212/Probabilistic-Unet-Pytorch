@@ -259,6 +259,9 @@ class VNDUnet(nn.Module):
                 # z_posterior = self.posterior_latent_space.rsample()
                 mu, log_sigma, p_vnd = self.posterior_params
 
+                std = torch.exp(log_sigma)
+                eps = torch.randn_like(std)
+
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])
                 qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
