@@ -176,6 +176,13 @@ class Fcomb(nn.Module):
             return self.last_layer(output)
 
 
+TAU = 1.
+PI = 0.95
+RSV_DIM = 1.
+EPS = 1e-8
+SAMPLE_LEN = 1.
+
+
 class VNDUnet(nn.Module):
     """
     A probabilistic UNet (https://arxiv.org/abs/1806.05034) implementation.
@@ -212,7 +219,7 @@ class VNDUnet(nn.Module):
             self.posterior_params = self.posterior.forward(patch, segm)
 
         self.prior_params = self.prior.forward(patch)
-        self.unet_features = self.unet.forward(patch,False)
+        self.unet_features = self.unet.forward(patch, False)
 
     def sample(self, testing=False):
         """
@@ -220,17 +227,15 @@ class VNDUnet(nn.Module):
         and combining this with UNet features
         """
         if testing == False:
-            mu, log_sigma, p_vnd = self.prior_params
-            std = torch.exp(log_sigma)
-            eps = torch.randn_like(std)
-
-            z_prior = self.prior_params.rsample()
-            self.z_prior_sample = z_prior
+            # z_prior = self.prior_latent_space.rsample()
+            # self.z_prior_sample = z_prior
+            pass
         else:
             #You can choose whether you mean a sample or the mean here. For the GED it is important to take a sample.
             #z_prior = self.prior_latent_space.base_dist.loc 
             z_prior = self.prior_latent_space.sample()
             self.z_prior_sample = z_prior
+            self.posterior_params
         return self.fcomb.forward(self.unet_features,z_prior)
 
 
@@ -241,10 +246,26 @@ class VNDUnet(nn.Module):
         calculate_posterior: use a provided sample or sample from posterior latent space
         """
         if use_posterior_mean:
-            z_posterior = self.posterior_latent_space.loc
+            z_posterior = self.posterior_params[0]
         else:
             if calculate_posterior:
-                z_posterior = self.posterior_latent_space.rsample()
+                # z_posterior = self.posterior_latent_space.rsample()
+                mu, log_sigma, p_vnd = self.posterior_params
+
+                beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
+                ONES = torch.ones_like(beta[:,0:1])
+                qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
+                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=True)
+
+                cumsum = torch.cumsum(s_vnd, dim=1)
+                dif = cumsum - s_vnd
+                mask0 = dif[:, 1:]
+                mask1 = 1. - mask0
+                s_vnd = torch.cat([torch.ones_like(p_vnd[:,:RSV_DIM]), mask1], dim = -1)
+
+                print(s_vnd)
+                exit()
+
         return self.fcomb.forward(self.unet_features, z_posterior)
 
     def kl_divergence(self, analytic=True, calculate_posterior=False, z_posterior=None):
