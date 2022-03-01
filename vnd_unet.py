@@ -95,18 +95,18 @@ class AxisAlignedConvGaussian(nn.Module):
         encoding = torch.mean(encoding, dim=3, keepdim=True)
 
         #Convert encoding to 2 x latent dim and split up for mu and log_sigma
-        mu_log_sigma = self.conv_layer(encoding)
+        mu_log_var = self.conv_layer(encoding)
 
         #We squeeze the second dimension twice, since otherwise it won't work when batch size is equal to 1
-        mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
-        mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
+        mu_log_var = torch.squeeze(mu_log_var, dim=2)
+        mu_log_var = torch.squeeze(mu_log_var, dim=2)
 
-        mu, log_sigma, p_vnd = mu_log_sigma.chunk(chunks = 3, dim = 1)
+        mu, log_var, p_vnd = mu_log_var.chunk(chunks = 3, dim = 1)
 
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
         # dist = Independent(Normal(loc=mu, scale=torch.exp(log_sigma)),1)
-        return mu, log_sigma, p_vnd
+        return mu, log_var, p_vnd
 
 class Fcomb(nn.Module):
     """
@@ -257,9 +257,9 @@ class VNDUnet(nn.Module):
         else:
             if calculate_posterior:
                 # z_posterior = self.posterior_latent_space.rsample()
-                mu, log_sigma, p_vnd = self.posterior_params
+                mu, log_var, p_vnd = self.posterior_params
 
-                std = torch.exp(log_sigma)
+                std = torch.exp(0.5 * log_var)
                 eps = torch.randn_like(std)
 
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
@@ -285,7 +285,29 @@ class VNDUnet(nn.Module):
         """
         if analytic:
             #Neeed to add this to torch source code, see: https://github.com/pytorch/pytorch/issues/13545
-            kl_div = kl.kl_divergence(self.posterior_latent_space, self.prior_latent_space)
+            # kl_div = kl.kl_divergence(self.posterior_latent_space, self.prior_latent_space)
+            mu_pr, log_var_pr, p_vnd_pr = self.prior_params
+            mu_pos, log_var_pos, p_vnd_pos = self.posterior_params
+            kld_gaussian = log_var_pr - log_var_pos + (torch.exp(log_var_pos) + torch.square(mu_pos - mu_pr)) / (2 * torch.exp(log_var_pos)) - 0.5
+
+
+            beta = torch.sigmoid(self.clip_beta(p_vnd_pos[:, RSV_DIM:]))
+            ONES = torch.ones_like(beta[:,0:1])
+            qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
+
+            ZEROS = torch.zeros_like(beta[:, 0:1])
+            cum_sum = torch.cat([ZEROS, torch.cumsum(qv[:, 1:], dim = 1)], dim = -1)[:, :-1]
+            coef1 = torch.sum(qv, dim=1, keepdim=True) - cum_sum
+            coef1 = torch.cat([torch.ones_like(p_vnd[:,:RSV_DIM]), coef1], dim = -1)
+            kld_weighted_gaussian = torch.diagonal(kld_gaussian.mm(coef1.t()), 0).mean()
+
+            beta_pr = torch.sigmoid(self.clip_beta(p_vnd_pr[:, RSV_DIM:]))
+            ONES = torch.ones_like(beta_pr[:,0:1])
+            pv = torch.cat([ONES, torch.cumprod(beta_pr, dim=1)], dim = -1) * torch.cat([1 - beta_pr, ONES], dim = -1)
+
+            log_frac = torch.log(qv / pv + EPS)
+
+
         else:
             if calculate_posterior:
                 z_posterior = self.posterior_latent_space.rsample()
@@ -304,11 +326,9 @@ class VNDUnet(nn.Module):
         #Here we use the posterior sample sampled above
         self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=True, z_posterior=self.posterior_params)
 
-        print(self.reconstruction.shape)
-        exit()
         # add this later
-        # self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
-        # self.kl = torch.mean(self.kl)
+        self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=self.posterior_params)
+        self.kl = torch.mean(self.kl)
 
         reconstruction_loss = criterion(input=self.reconstruction, target=segm)
         self.reconstruction_loss = torch.sum(reconstruction_loss)
