@@ -178,7 +178,7 @@ class Fcomb(nn.Module):
 
 TAU = 1.
 PI = 0.95
-RSV_DIM = 1.
+RSV_DIM = 1
 EPS = 1e-8
 SAMPLE_LEN = 1.
 
