@@ -101,7 +101,6 @@ class AxisAlignedConvGaussian(nn.Module):
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
 
-        print('*****', mu_log_sigma.shape)
         mu, log_sigma, p_vnd = mu_log_sigma.chunk(chunks = 3, dim = 1)
 
         #This is a multivariate normal with diagonal covariance matrix sigma
@@ -260,10 +259,6 @@ class VNDUnet(nn.Module):
                 # z_posterior = self.posterior_latent_space.rsample()
                 mu, log_sigma, p_vnd = self.posterior_params
 
-                print(RSV_DIM)
-                print(p_vnd.shape)
-                print(mu.shape)
-                print(log_sigma.shape)
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])
                 qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
@@ -275,8 +270,7 @@ class VNDUnet(nn.Module):
                 mask1 = 1. - mask0
                 s_vnd = torch.cat([torch.ones_like(p_vnd[:,:RSV_DIM]), mask1], dim = -1)
 
-                print(s_vnd)
-                exit()
+                z_posterior = (eps * std + mu) * s_vnd
 
         return self.fcomb.forward(self.unet_features, z_posterior)
 
@@ -307,6 +301,8 @@ class VNDUnet(nn.Module):
         #Here we use the posterior sample sampled above
         self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=True, z_posterior=self.posterior_params)
 
+        print(self.reconstruction.shape)
+        exit()
         # add this later
         # self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
         # self.kl = torch.mean(self.kl)
