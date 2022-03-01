@@ -221,6 +221,13 @@ class VNDUnet(nn.Module):
         self.prior_params = self.prior.forward(patch)
         self.unet_features = self.unet.forward(patch, False)
 
+    @staticmethod
+    def clip_beta(tensor, to=5.):
+        """
+        Shrink all tensor's values to range [-to,to]
+        """
+        return torch.clamp(tensor, -to, to)
+
     def sample(self, testing=False):
         """
         Sample a segmentation by reconstructing from a prior sample
