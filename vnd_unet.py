@@ -67,7 +67,7 @@ class AxisAlignedConvGaussian(nn.Module):
         else:
             self.name = 'Prior'
         self.encoder = Encoder(self.input_channels, self.num_filters, self.no_convs_per_block, initializers, posterior=self.posterior)
-        self.conv_layer = nn.Conv2d(num_filters[-1], 2 * self.latent_dim, (1,1), stride=1)
+        self.conv_layer = nn.Conv2d(num_filters[-1], 3 * self.latent_dim, (1,1), stride=1)
         self.show_img = 0
         self.show_seg = 0
         self.show_concat = 0
