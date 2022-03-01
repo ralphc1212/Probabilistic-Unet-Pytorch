@@ -101,6 +101,7 @@ class AxisAlignedConvGaussian(nn.Module):
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
 
+        print(mu_log_sigma.shape)
         mu, log_sigma, p_vnd = mu_log_sigma.chunk(chunks = 3, dim = 1)
 
         #This is a multivariate normal with diagonal covariance matrix sigma
