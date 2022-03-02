@@ -290,7 +290,6 @@ class VNDUnet(nn.Module):
             mu_pos, log_var_pos, p_vnd_pos = self.posterior_params
             kld_gaussian = log_var_pr - log_var_pos + (torch.exp(log_var_pos) + torch.square(mu_pos - mu_pr)) / (2 * torch.exp(log_var_pos)) - 0.5
 
-
             beta = torch.sigmoid(self.clip_beta(p_vnd_pos[:, RSV_DIM:]))
             ONES = torch.ones_like(beta[:,0:1])
             qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
@@ -298,7 +297,7 @@ class VNDUnet(nn.Module):
             ZEROS = torch.zeros_like(beta[:, 0:1])
             cum_sum = torch.cat([ZEROS, torch.cumsum(qv[:, 1:], dim = 1)], dim = -1)[:, :-1]
             coef1 = torch.sum(qv, dim=1, keepdim=True) - cum_sum
-            coef1 = torch.cat([torch.ones_like(p_vnd[:,:RSV_DIM]), coef1], dim = -1)
+            coef1 = torch.cat([torch.ones_like(p_vnd_pos[:,:RSV_DIM]), coef1], dim = -1)
             kld_weighted_gaussian = torch.diagonal(kld_gaussian.mm(coef1.t()), 0).mean()
 
             beta_pr = torch.sigmoid(self.clip_beta(p_vnd_pr[:, RSV_DIM:]))
@@ -306,7 +305,8 @@ class VNDUnet(nn.Module):
             pv = torch.cat([ONES, torch.cumprod(beta_pr, dim=1)], dim = -1) * torch.cat([1 - beta_pr, ONES], dim = -1)
 
             log_frac = torch.log(qv / pv + EPS)
-
+            kld_vnd = torch.diagonal(qv.mm(log_frac.t()), 0).mean()
+            kld_loss = kld_vnd + kld_weighted_gaussian
 
         else:
             if calculate_posterior:
