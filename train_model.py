@@ -54,6 +54,7 @@ def train(loss_dict):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        print(loss)
 
     loss_dict['tr_elbo'] /= len(train_loader)
     loss_dict['tr_loss'] /= len(train_loader)
