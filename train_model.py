@@ -12,7 +12,7 @@ import time
 num_filters = [32,64,128,192]
 latent_dim = 6
 no_convs_fcomb = 4
-beta = 1.
+beta = 1e-2
 reg_weight = 1e-5
 weight_decay = 0
 init_lr = 1e-4
@@ -47,17 +47,13 @@ def train(loss_dict):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         elbo = net.elbo(mask)
-        print(elbo)
         reg_loss = l2_regularisation(net.posterior) + l2_regularisation(net.prior) + l2_regularisation(net.fcomb.layers)
-        print(reg_loss)
         loss = - elbo + reg_weight * reg_loss
         loss_dict['tr_elbo'] -= elbo.item()
         loss_dict['tr_loss'] += loss.item()
-        print(loss)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        exit()
 
     loss_dict['tr_elbo'] /= len(train_loader)
     loss_dict['tr_loss'] /= len(train_loader)
