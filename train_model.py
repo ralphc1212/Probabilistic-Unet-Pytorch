@@ -51,10 +51,11 @@ def train(loss_dict):
         loss = - elbo + reg_weight * reg_loss
         loss_dict['tr_elbo'] -= elbo.item()
         loss_dict['tr_loss'] += loss.item()
+        print(loss)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        print(loss)
+
 
     loss_dict['tr_elbo'] /= len(train_loader)
     loss_dict['tr_loss'] /= len(train_loader)
