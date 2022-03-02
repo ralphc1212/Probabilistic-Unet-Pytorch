@@ -12,7 +12,7 @@ import time
 num_filters = [32,64,128,192]
 latent_dim = 6
 no_convs_fcomb = 4
-beta = 1e-2
+beta = 1.
 reg_weight = 1e-5
 weight_decay = 0
 init_lr = 1e-4
