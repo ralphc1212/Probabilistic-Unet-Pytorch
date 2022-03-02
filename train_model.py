@@ -9,10 +9,24 @@ from utils import l2_regularisation
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
-dataset_size = len(dataset)
-indices = list(range(dataset_size))
-split = int(np.floor(0.1 * dataset_size))
-np.random.shuffle(indices)
+# dataset_size = len(dataset)
+# indices = list(range(dataset_size))
+# split = int(np.floor(0.1 * dataset_size))
+# np.random.shuffle(indices)
+
+# num of cross validation
+K = 3
+splits = []
+for i in range(K):
+
+    with open('splits/split_{}.csv'.format(i), 'r') as f:
+        reader = csv.reader(f)
+        split = reader.readrows(split_list)
+    splits.append(split)
+
+print(splits)
+exit()
+
 train_indices, test_indices = indices[split:], indices[:split]
 train_sampler = SubsetRandomSampler(train_indices)
 test_sampler = SubsetRandomSampler(test_indices)
