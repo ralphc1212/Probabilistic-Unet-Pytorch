@@ -67,7 +67,7 @@ def validation(loss_dict):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         elbo = net.elbo(mask)
-        loss_dict['val_elbo'] += elbo.item()
+        loss_dict['val_elbo'] -= elbo.item()
 
     loss_dict['val_elbo'] /= len(val_loader)
     return loss_dict
