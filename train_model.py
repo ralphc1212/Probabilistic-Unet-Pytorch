@@ -20,6 +20,10 @@ train_loader = DataLoader(dataset, batch_size=32, sampler=train_sampler)
 test_loader = DataLoader(dataset, batch_size=32, sampler=test_sampler)
 print("Number of training/test patches:", (len(train_indices),len(test_indices)))
 
+# start: lr, weight_decay, kld_weight, optimizer
+# train_loss, testing_loss, time, reg_loss
+# save best model w\ best loss, 
+
 # net = ProbabilisticUnet(input_channels=1, num_classes=1, num_filters=[32,64,128,192], latent_dim=6, no_convs_fcomb=4, beta=10.0)
 net = VNDUnet(input_channels=1, num_classes=1, num_filters=[32,64,128,192], latent_dim=6, no_convs_fcomb=4, beta=10.0)
 net.to(device)
@@ -33,9 +37,7 @@ for epoch in range(epochs):
         net.forward(patch, mask, training=True)
         elbo = net.elbo(mask)
         reg_loss = l2_regularisation(net.posterior) + l2_regularisation(net.prior) + l2_regularisation(net.fcomb.layers)
-        loss = -elbo + 1e-5 * reg_loss
+        loss = - elbo + 1e-5 * reg_loss
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-

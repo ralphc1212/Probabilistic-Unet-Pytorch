@@ -175,13 +175,11 @@ class Fcomb(nn.Module):
             output = self.layers(feature_map)
             return self.last_layer(output)
 
-
 TAU = 1.
 PI = 0.95
 RSV_DIM = 1
 EPS = 1e-8
 SAMPLE_LEN = 1.
-
 
 class VNDUnet(nn.Module):
     """
