@@ -333,4 +333,5 @@ class VNDUnet(nn.Module):
 
         print(reconstruction_loss)
         print(self.kl)
+        exit()
         return -(self.reconstruction_loss + self.beta * self.kl)
