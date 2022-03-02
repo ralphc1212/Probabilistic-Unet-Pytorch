@@ -67,7 +67,6 @@ def validation(loss_dict):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         elbo = net.elbo(mask)
-        loss = - elbo + reg_weight * reg_loss
         loss_dict['val_elbo'] += elbo.item()
 
     loss_dict['val_elbo'] /= len(val_loader)
@@ -117,6 +116,7 @@ for i in range(K):
     for epoch in range(epochs):
         time_start = time.time()
 
+        print(len(train_loader))
         loss_dict = {'tr_elbo': 0, 'tr_loss': 0, 'val_elbo': 0}
         loss_dict = train(loss_dict)
         loss_dict = validation(loss_dict)
