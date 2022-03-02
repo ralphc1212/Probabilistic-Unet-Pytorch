@@ -3,8 +3,8 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from load_LIDC_data import LIDC_IDRI
-# from probabilistic_unet import ProbabilisticUnet
-from vnd_unet import VNDUnet
+from probabilistic_unet import ProbabilisticUnet
+# from vnd_unet import VNDUnet
 from utils import l2_regularisation
 import csv
 import time
@@ -104,8 +104,8 @@ for i in range(K):
 
     # init probabilistic UNET or its variants
     print(TAG + 'num_filters: {}, latent dimension: {}, Fcomb layer number: {}, KLD weight: {}.'.format(num_filters, latent_dim, no_convs_fcomb, beta))
-    # net = ProbabilisticUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
-    net = VNDUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
+    net = ProbabilisticUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
+    # net = VNDUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
     net.to(device)
     optimizer = torch.optim.Adam(net.parameters(), lr=init_lr, weight_decay=weight_decay)
 
