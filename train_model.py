@@ -49,7 +49,7 @@ def train(loss_dict):
         elbo = net.elbo(mask)
         reg_loss = l2_regularisation(net.posterior) + l2_regularisation(net.prior) + l2_regularisation(net.fcomb.layers)
         loss = - elbo + reg_weight * reg_loss
-        loss_dict['tr_elbo'] += elbo.item()
+        loss_dict['tr_elbo'] -= elbo.item()
         loss_dict['tr_loss'] += loss.item()
         optimizer.zero_grad()
         loss.backward()
