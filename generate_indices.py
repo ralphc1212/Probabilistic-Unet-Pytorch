@@ -18,6 +18,6 @@ for i in range(nsplits):
 	test = indices[-int(split):]
 
 	split_list = [train, val, test]
-	with open('splits/split_{}.csv'.format(i), 'wb') as f:
+	with open('splits/split_{}.csv'.format(i), 'w') as f:
 		writer = csv.writer(f)
 		writer.writerows(split_list)
