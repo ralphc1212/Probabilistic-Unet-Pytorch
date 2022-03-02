@@ -123,5 +123,5 @@ for i in range(K):
         loss_dict = {'tr_elbo': 0, 'tr_loss': 0, 'val_elbo': 0}
         loss_dict = train(loss_dict)
         loss_dict = validation(loss_dict)
-        print(TAG + 'Epoch: {}, Trainnig ELBO: {}, Training loss: {}, Validation ELBO: {}.'.format(epoch, loss_dict['tr_elbo'], loss_dict['tr_loss'], loss_dict['val_elbo']))
-        exit()
+        print(TAG + 'Epoch: {}, Trainnig ELBO: {}, Training loss: {}, Validation ELBO: {}.'.format(
+                        epoch, loss_dict['tr_elbo'], loss_dict['tr_loss'], loss_dict['val_elbo']))
