@@ -306,7 +306,7 @@ class VNDUnet(nn.Module):
 
             log_frac = torch.log(qv / pv + EPS)
             kld_vnd = torch.diagonal(qv.mm(log_frac.t()), 0).mean()
-            kld_loss = kld_vnd + kld_weighted_gaussian
+            kl_div = kld_vnd + kld_weighted_gaussian
 
         else:
             if calculate_posterior:
@@ -328,6 +328,8 @@ class VNDUnet(nn.Module):
 
         # add this later
         self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=self.posterior_params)
+        print(self.kl.shape)
+        exit()
         self.kl = torch.mean(self.kl)
 
         reconstruction_loss = criterion(input=self.reconstruction, target=segm)
