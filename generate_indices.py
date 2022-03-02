@@ -21,3 +21,5 @@ for i in range(nsplits):
 	with open('splits/split_{}.csv'.format(i), 'w') as f:
 		writer = csv.writer(f)
 		writer.writerows(split_list)
+
+	

@@ -24,6 +24,7 @@ for i in range(K):
     with open('splits/split_{}.csv'.format(i), 'r') as f:
         reader = csv.reader(f)
         for i, line in enumerate(reader):
+            line = [int(elem) for elem in line]
             split.append(line)
     splits.append(split)
 
