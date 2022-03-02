@@ -20,9 +20,11 @@ K = 3
 splits = []
 for i in range(K):
 
+    split = []
     with open('splits/split_{}.csv'.format(i), 'r') as f:
         reader = csv.reader(f)
-        split = reader.readrows(split_list)
+        for i, line in enumerate(reader):
+            split.append(line)
     splits.append(split)
 
 print(splits)
