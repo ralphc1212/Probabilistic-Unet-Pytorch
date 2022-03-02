@@ -271,7 +271,8 @@ class ProbabilisticUnet(nn.Module):
         z_posterior = self.posterior_latent_space.rsample()
 
         self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
-
+        print(kl_div.shape)
+        exit()
         self.kl = torch.mean(self.kl)
 
         #Here we use the posterior sample sampled above
