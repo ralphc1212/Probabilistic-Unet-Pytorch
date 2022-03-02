@@ -331,4 +331,6 @@ class VNDUnet(nn.Module):
         self.reconstruction_loss = torch.sum(reconstruction_loss)
         self.mean_reconstruction_loss = torch.mean(reconstruction_loss)
 
+        print(reconstruction_loss)
+        print(self.kl)
         return -(self.reconstruction_loss + self.beta * self.kl)
