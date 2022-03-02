@@ -116,8 +116,6 @@ for i in range(K):
     for epoch in range(epochs):
         time_start = time.time()
 
-        print(len(train_loader))
-        print(len(val_loader))
         loss_dict = {'tr_elbo': 0, 'tr_loss': 0, 'val_elbo': 0}
         loss_dict = train(loss_dict)
         loss_dict = validation(loss_dict)
