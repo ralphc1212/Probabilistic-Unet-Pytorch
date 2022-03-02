@@ -6,6 +6,7 @@ from load_LIDC_data import LIDC_IDRI
 # from probabilistic_unet import ProbabilisticUnet
 from vnd_unet import VNDUnet
 from utils import l2_regularisation
+import csv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
