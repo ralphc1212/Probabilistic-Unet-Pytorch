@@ -176,8 +176,8 @@ class Fcomb(nn.Module):
             return self.last_layer(output)
 
 TAU = 1.
-PI = 0.95
-RSV_DIM = 1
+PI = 0.4
+RSV_DIM = 2
 EPS = 1e-8
 SAMPLE_LEN = 1.
 
