@@ -176,7 +176,7 @@ class Fcomb(nn.Module):
             return self.last_layer(output)
 
 TAU = 1.
-PI = 0.4
+PI = 0.8
 RSV_DIM = 2
 EPS = 1e-8
 SAMPLE_LEN = 1.
@@ -263,7 +263,7 @@ class VNDUnet(nn.Module):
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])
                 qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
-                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=True)
+                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=False)
 
                 cumsum = torch.cumsum(s_vnd, dim=1)
                 dif = cumsum - s_vnd
