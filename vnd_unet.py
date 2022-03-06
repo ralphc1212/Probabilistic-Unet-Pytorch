@@ -286,7 +286,7 @@ class VNDUnet(nn.Module):
             # kl_div = kl.kl_divergence(self.posterior_latent_space, self.prior_latent_space)
             mu_pr, log_var_pr, p_vnd_pr = self.prior_params
             mu_pos, log_var_pos, p_vnd_pos = self.posterior_params
-            kld_gaussian = log_var_pr - log_var_pos + (torch.exp(log_var_pos) + torch.square(mu_pos - mu_pr)) / (2 * torch.exp(log_var_pos)) - 0.5
+            kld_gaussian = (log_var_pr - log_var_pos) / 2 + (torch.exp(log_var_pos) + torch.square(mu_pos - mu_pr)) / (2 * torch.exp(log_var_pr)) - 0.5
 
             beta = torch.sigmoid(self.clip_beta(p_vnd_pos[:, RSV_DIM:]))
             ONES = torch.ones_like(beta[:,0:1])
@@ -318,7 +318,7 @@ class VNDUnet(nn.Module):
         """
         Calculate the evidence lower bound of the log-likelihood of P(Y|X)
         """
-        
+
         criterion = nn.BCEWithLogitsLoss(size_average = False, reduce=False, reduction=None)
 
         #Here we use the posterior sample sampled above
