@@ -140,7 +140,7 @@ for i in range(K):
                         epoch, loss_dict['tr_elbo'], loss_dict['tr_loss'], loss_dict['val_elbo']))
 
         if loss_dict['val_elbo'] < best_val_elbo:
-            torch.save(net, path + str(i) + 'pth')
+            torch.save(net, path + str(i) + '.pth')
             best_val_elbo = loss_dict['val_elbo']
 
     te_loss = test()
