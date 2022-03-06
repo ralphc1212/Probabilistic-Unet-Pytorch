@@ -318,7 +318,7 @@ class VNDUnet(nn.Module):
         """
         Calculate the evidence lower bound of the log-likelihood of P(Y|X)
         """
-
+        
         criterion = nn.BCEWithLogitsLoss(size_average = False, reduce=False, reduction=None)
 
         #Here we use the posterior sample sampled above

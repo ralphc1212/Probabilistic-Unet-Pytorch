@@ -34,7 +34,7 @@ class Encoder(nn.Module):
 
             if i != 0:
                 layers.append(nn.AvgPool2d(kernel_size=2, stride=2, padding=0, ceil_mode=True))
-            
+
             layers.append(nn.Conv2d(input_dim, output_dim, kernel_size=3, padding=int(padding)))
             layers.append(nn.ReLU(inplace=True))
 
@@ -271,12 +271,11 @@ class ProbabilisticUnet(nn.Module):
         z_posterior = self.posterior_latent_space.rsample()
 
         self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=z_posterior)
-        
         self.kl = torch.mean(self.kl)
 
         #Here we use the posterior sample sampled above
         self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=False, z_posterior=z_posterior)
-        
+
         reconstruction_loss = criterion(input=self.reconstruction, target=segm)
         self.reconstruction_loss = torch.sum(reconstruction_loss)
         self.mean_reconstruction_loss = torch.mean(reconstruction_loss)
