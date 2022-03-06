@@ -96,7 +96,7 @@ def test():
 
 path = 'checkpoint/' + DATA + '/' + hyper + '/'
 
-if not os.path.isfile(path):
+if not os.path.isdir(path):
     os.makedirs(path)
 
 results = {}
