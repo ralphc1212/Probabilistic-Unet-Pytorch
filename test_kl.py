@@ -5,8 +5,8 @@ from torch.distributions import Normal, Independent, kl
 mu_pr = torch.tensor([0.2])
 mu_pos = torch.tensor([0.8])
 
-log_var_pr = torch.tensor([- 2])
-log_var_pos = torch.tensor([- 0.5])
+log_var_pr = torch.tensor([2])
+log_var_pos = torch.tensor([0.5])
 
 std_pr = torch.exp(0.5 * log_var_pr)
 std_pos = torch.exp(0.5 * log_var_pos)
