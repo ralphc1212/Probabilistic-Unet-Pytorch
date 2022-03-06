@@ -1,3 +1,4 @@
+import os
 import torch
 import numpy as np
 from torch.utils.data import DataLoader
@@ -17,6 +18,11 @@ reg_weight = 1e-5
 weight_decay = 0
 init_lr = 1e-4
 epochs = 100
+seed = 1
+
+DATA = 'LIDC_IDRI'
+
+hyper = 'beta-{}_regw-{}_wd-{}_lr-{}_seed-{}'.format(beta, reg_weight, weight_decay, init_lr, seed)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
@@ -86,8 +92,14 @@ def test():
 
     test_loss /= len(test_loader)
     print(TAG + 'Testing elbo: ', test_loss)
-    return loss_dict
+    return test_loss
 
+path = 'checkpoint/' + DATA + '/' + hyper + '/'
+
+if not os.isfile(path):
+    os.makedirs(path)
+
+results = {}
 # iterate the K fold 
 for i in range(K):
     # Dataloaders
@@ -117,7 +129,7 @@ for i in range(K):
     # train_loss, testing_loss, time, reg_loss
     # save best model w\ best loss, 
 
-    best_val_elbo = 0
+    best_val_elbo = 1e4
     for epoch in range(epochs):
         time_start = time.time()
 
@@ -126,3 +138,12 @@ for i in range(K):
         loss_dict = validation(loss_dict)
         print(TAG + 'Epoch: {}, Trainnig ELBO: {}, Training loss: {}, Validation ELBO: {}.'.format(
                         epoch, loss_dict['tr_elbo'], loss_dict['tr_loss'], loss_dict['val_elbo']))
+
+        if loss_dict['val_elbo'] < best_val_elbo:
+            torch.save(net, path + str(i) + 'pth')
+            best_val_elbo = loss_dict['val_elbo']
+
+    te_loss = test()
+    results[i] = {'val elbo': loss_dict['val_elbo'], 'test elbo': te_loss}
+
+torch.save(results, path + 'summary.pt')
