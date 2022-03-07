@@ -101,8 +101,8 @@ class AxisAlignedConvGaussian(nn.Module):
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
         mu_log_sigma = torch.squeeze(mu_log_sigma, dim=2)
 
-        mu = mu_log_sigma[:,:self.latent_dim]
-        log_sigma = mu_log_sigma[:,self.latent_dim:]
+        mu = mu_log_sigma[:, :self.latent_dim]
+        log_sigma = mu_log_sigma[:, self.latent_dim:]
 
         #This is a multivariate normal with diagonal covariance matrix sigma
         #https://github.com/pytorch/pytorch/pull/11178
@@ -229,7 +229,7 @@ class ProbabilisticUnet(nn.Module):
             #z_prior = self.prior_latent_space.base_dist.loc 
             z_prior = self.prior_latent_space.sample()
             self.z_prior_sample = z_prior
-        return self.fcomb.forward(self.unet_features,z_prior)
+        return self.fcomb.forward(self.unet_features, z_prior)
 
 
     def reconstruct(self, use_posterior_mean=False, calculate_posterior=False, z_posterior=None):
