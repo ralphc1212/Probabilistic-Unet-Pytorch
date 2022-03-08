@@ -16,7 +16,7 @@ no_convs_fcomb = 4
 beta = 10.
 reg_weight = 1e-5
 weight_decay = 1e-5
-init_lr = 1e-6
+init_lr = 1e-5
 epochs = 100
 seed = 1
 
