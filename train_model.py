@@ -16,7 +16,7 @@ no_convs_fcomb = 4
 beta = 10.
 reg_weight = 1e-5
 weight_decay = 1e-5
-init_lr = 1e-4
+init_lr = 1e-6
 epochs = 100
 seed = 1
 
@@ -100,6 +100,7 @@ if not os.path.isdir(path):
     os.makedirs(path)
 
 results = {}
+write_csv = [['fold', 'val elbo', 'test elbo']]
 # iterate the K fold 
 for i in range(K):
     # Dataloaders
@@ -146,5 +147,10 @@ for i in range(K):
 
     te_loss = test()
     results[i] = {'val elbo': loss_dict['val_elbo'], 'test elbo': te_loss}
+    write_csv.append([i, loss_dict['val_elbo'], te_loss])
 
 torch.save(results, path + 'summary.pt')
+
+with open('summary.csv','w') as f:
+    w = csv.writer(f)
+    w.writerows(write_csv)
