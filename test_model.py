@@ -43,9 +43,18 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
-        print(patch.shape)
-        print(mask.shape)
-        print(recons.shape)
+        torch.save_image(patch, 
+                        image_path+'patch_' + str(step) + '.png',
+                        normalize=True,
+                        nrow=12)
+        torch.save_image(mask, 
+                        image_path+'mask_' + str(step) + '.png',
+                        normalize=True,
+                        nrow=12)    
+        torch.save_image(recons, 
+                        image_path+'recons_' + str(step) + '.png',
+                        normalize=True,
+                        nrow=12)
         exit()
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
@@ -55,7 +64,11 @@ def test(dataloader=None, savefig=False):
     return test_loss
 
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1_hard-0/'
+image_path = path + 'prediction_images/'
 hard = False
+
+if not os.path.isdir(image_path):
+    os.makedirs(image_path)
 
 results = {}
 # iterate the K fold 
