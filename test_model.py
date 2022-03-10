@@ -56,22 +56,18 @@ def test(fold=0, dataloader=None, savefig=False):
 
         recons = torch.cat(recons)
 
-        print(torch.sigmoid(recons)[:4,0,58:72,58:72])
-        exit()
-
         torchvision.utils.save_image(patch, 
-                        image_path + str(fold) + '/' + 'patch_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + str(step) + '_patch' + '.png',
                         normalize=True,
                         nrow=32)
         torchvision.utils.save_image(mask, 
-                        image_path + str(fold) + '/' + 'mask_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
                         normalize=True,
                         nrow=32)    
         torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-                        image_path + str(fold) + '/' + 'recons_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
                         normalize=True,
                         nrow=32)
-        exit()
 
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
@@ -80,8 +76,8 @@ def test(fold=0, dataloader=None, savefig=False):
     # print(TAG + 'Testing elbo: ', test_loss)
     return test_loss
 
-path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1_hard-0/'
-image_path = path + 'prediction_images_random/'
+path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
+image_path = path + 'prediction_images/'
 hard = False
 
 if not os.path.isdir(image_path):
