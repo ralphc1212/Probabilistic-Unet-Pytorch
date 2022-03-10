@@ -12,6 +12,9 @@ import time
 
 DATA = 'LIDC_IDRI'
 
+num_filters = [32,64,128,192]
+latent_dim = 6
+no_convs_fcomb = 4
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
