@@ -19,10 +19,11 @@ weight_decay = 1e-6
 init_lr = 1e-4
 epochs = 100
 seed = 1
+hard = True
 
 DATA = 'LIDC_IDRI'
 
-hyper = 'beta-{}_regw-{}_wd-{}_lr-{}_seed-{}'.format(beta, reg_weight, weight_decay, init_lr, seed)
+hyper = 'beta-{}_regw-{}_wd-{}_lr-{}_seed-{}_hard-{}'.format(beta, reg_weight, weight_decay, init_lr, seed, str(int(hard)))
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
@@ -52,7 +53,7 @@ def train(loss_dict):
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
-        elbo = net.elbo(mask)
+        elbo = net.elbo(mask, hard=hard)
         reg_loss = l2_regularisation(net.posterior) + l2_regularisation(net.prior) + l2_regularisation(net.fcomb.layers)
         loss = - elbo + reg_weight * reg_loss
         loss_dict['tr_elbo'] -= elbo.item()
@@ -73,7 +74,7 @@ def validation(loss_dict):
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
-        elbo = net.elbo(mask)
+        elbo = net.elbo(mask, hard=hard)
         loss_dict['val_elbo'] -= elbo.item()
 
     loss_dict['val_elbo'] /= len(val_loader)
@@ -87,7 +88,7 @@ def test():
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
-        elbo = net.elbo(mask)
+        elbo = net.elbo(mask, hard=hard)
         test_loss -= elbo.item()
 
     test_loss /= len(test_loader)

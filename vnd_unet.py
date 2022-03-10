@@ -226,7 +226,7 @@ class VNDUnet(nn.Module):
         """
         return torch.clamp(tensor, -to, to)
 
-    def sample(self, testing=False):
+    def sample(self, testing=False, fix_len=None):
         """
         Sample a segmentation by reconstructing from a prior sample
         and combining this with UNet features
@@ -238,13 +238,31 @@ class VNDUnet(nn.Module):
         else:
             #You can choose whether you mean a sample or the mean here. For the GED it is important to take a sample.
             #z_prior = self.prior_latent_space.base_dist.loc 
-            z_prior = self.prior_latent_space.sample()
-            self.z_prior_sample = z_prior
-            self.posterior_params
-        return self.fcomb.forward(self.unet_features,z_prior)
+            mu_pr, log_var_pr, p_vnd_pr = self.prior_params
+
+            std = torch.exp(0.5 * log_var_pr)
+            eps = torch.randn_like(std)
+
+            # if fix_len:
+
+            # else:
+            #     beta = torch.sigmoid(self.clip_beta(p_vnd_pr[:,RSV_DIM:]))
+            #     ONES = torch.ones_like(beta[:,0:1])
+            #     qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
+            #     s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=False)
+
+            #     cumsum = torch.cumsum(s_vnd, dim=1)
+            #     dif = cumsum - s_vnd
+            #     mask0 = dif[:, 1:]
+            #     mask1 = 1. - mask0
+            #     s_vnd = torch.cat([torch.ones_like(p_vnd_pr[:,:RSV_DIM]), mask1], dim = -1)
+
+            z_prior = (eps * std + mu_pr) * s_vnd
+
+        return self.fcomb.forward(self.unet_features, z_prior)
 
 
-    def reconstruct(self, use_posterior_mean=False, calculate_posterior=False, z_posterior=None):
+    def reconstruct(self, use_posterior_mean=False, calculate_posterior=False, z_posterior=None, hard=False):
         """
         Reconstruct a segmentation from a posterior sample (decoding a posterior sample) and UNet feature map
         use_posterior_mean: use posterior_mean instead of sampling z_q
@@ -263,7 +281,7 @@ class VNDUnet(nn.Module):
                 beta = torch.sigmoid(self.clip_beta(p_vnd[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])
                 qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
-                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=False)
+                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=hard)
 
                 cumsum = torch.cumsum(s_vnd, dim=1)
                 dif = cumsum - s_vnd
@@ -314,7 +332,7 @@ class VNDUnet(nn.Module):
             kl_div = log_posterior_prob - log_prior_prob
         return kl_div
 
-    def elbo(self, segm, analytic_kl=True, reconstruct_posterior_mean=False):
+    def elbo(self, segm, analytic_kl=True, reconstruct_posterior_mean=False, hard=False):
         """
         Calculate the evidence lower bound of the log-likelihood of P(Y|X)
         """
@@ -322,7 +340,7 @@ class VNDUnet(nn.Module):
         criterion = nn.BCEWithLogitsLoss(size_average = False, reduce=False, reduction=None)
 
         #Here we use the posterior sample sampled above
-        self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=True, z_posterior=self.posterior_params)
+        self.reconstruction = self.reconstruct(use_posterior_mean=reconstruct_posterior_mean, calculate_posterior=True, z_posterior=self.posterior_params, hard=hard)
 
         # add this later
         self.kl = self.kl_divergence(analytic=analytic_kl, calculate_posterior=False, z_posterior=self.posterior_params)
