@@ -48,7 +48,7 @@ class LIDC_IDRI(Dataset):
         image = np.expand_dims(self.images[index], axis=0)
 
         if self.plot:
-            print(len(self.labels[index]))
+            print(type(self.labels[index]))
             print(self.labels[index][0].shape)
             label = self.labels[index].astype(float)
         else:
