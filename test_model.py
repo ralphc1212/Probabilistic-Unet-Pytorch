@@ -44,9 +44,9 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
-        print(mask[0])
+        print(mask[0].sum())
         print(patch[0])
-        print(torch.sigmoid(recons[0]) > 0.5)
+        print((torch.sigmoid(recons[0]) > 0.5).float().sum())
         exit()
         torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
