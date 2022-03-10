@@ -52,9 +52,9 @@ def test(dataloader=None, savefig=False):
             recons.append(net.sample(testing=True, fix_len=1))
 
         recons = torch.cat(recons)
-        recons = recons.view(-1, *recons.shape[2:])
         print(recons.shape)
         print(mask.shape)
+        exit()
         torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
                         normalize=True,
