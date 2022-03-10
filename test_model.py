@@ -42,10 +42,10 @@ def test(dataloader=None, savefig=False):
 
         patch = patch.to(device)
         mask = mask.to(device)
-        print(mask.shape)
-        print(mask[0][0].shape)
-        exit()
+
+        mask = mask.view(-1, *mask.shape[2:])
         mask = torch.unsqueeze(mask,1)
+        print(mask.shape)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
 
