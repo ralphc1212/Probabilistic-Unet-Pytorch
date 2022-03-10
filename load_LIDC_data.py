@@ -11,8 +11,9 @@ class LIDC_IDRI(Dataset):
     labels = []
     series_uid = []
 
-    def __init__(self, dataset_location, transform=None):
+    def __init__(self, dataset_location, transform=None, plot=False):
         self.transform = transform
+        self.plot = plot
         max_bytes = 2**31 - 1
         data = {}
         for file in os.listdir(dataset_location):
@@ -46,8 +47,11 @@ class LIDC_IDRI(Dataset):
     def __getitem__(self, index):
         image = np.expand_dims(self.images[index], axis=0)
 
-        #Randomly select one of the four labels for this image
-        label = self.labels[index][random.randint(0,3)].astype(float)
+        if self.plot:
+            label = self.labels[index].astype(float)
+        else:
+            #Randomly select one of the four labels for this image
+            label = self.labels[index][random.randint(0,3)].astype(float)
         if self.transform is not None:
             image = self.transform(image)
 
