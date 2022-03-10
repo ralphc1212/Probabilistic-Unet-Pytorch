@@ -44,6 +44,7 @@ def test(dataloader=None, savefig=False):
         patch = patch.to(device)
         mask = mask.to(device)
 
+        mask = mask.permute(1, 0, 2, 3)
         mask = mask.view(-1, *mask.shape[2:])
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=False)
@@ -54,15 +55,15 @@ def test(dataloader=None, savefig=False):
         recons = torch.cat(recons)
 
         torchvision.utils.save_image(patch, 
-                        image_path+'patch_' + str(step) + '.png',
+                        image_path + 'patch_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)
         torchvision.utils.save_image(mask, 
-                        image_path+'mask_' + str(step) + '.png',
+                        image_path + 'mask_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)    
         torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-                        image_path+'recons_' + str(step) + '.png',
+                        image_path + 'recons_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)
         exit()
