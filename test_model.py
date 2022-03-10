@@ -56,6 +56,9 @@ def test(fold=0, dataloader=None, savefig=False):
 
         recons = torch.cat(recons)
 
+        print(torch.sigmoid(recons)[:4])
+        exit()
+
         torchvision.utils.save_image(patch, 
                         image_path + str(fold) + '/' + 'patch_' + str(step) + '.png',
                         normalize=True,
