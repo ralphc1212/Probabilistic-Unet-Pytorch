@@ -1,5 +1,6 @@
 import os
 import torch
+import torchvision
 import numpy as np
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -43,15 +44,15 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
-        torch.save_image(patch, 
+        torchvision.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)
-        torch.save_image(mask, 
+        torchvision.save_image(mask, 
                         image_path+'mask_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)    
-        torch.save_image(recons, 
+        torchvision.save_image(recons, 
                         image_path+'recons_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)
