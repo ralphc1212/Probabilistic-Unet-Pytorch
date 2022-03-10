@@ -43,6 +43,8 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
+        print(patch.shape)
+        print(mask.shape)
         print(recons.shape)
         exit()
         # elbo = net.elbo(mask, hard=hard)
