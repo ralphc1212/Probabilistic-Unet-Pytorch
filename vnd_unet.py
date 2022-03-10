@@ -244,10 +244,7 @@ class VNDUnet(nn.Module):
 
             if fix_len:
                 z = eps * std + mu_pr
-                print(z)
                 z_prior = torch.cat([z[:, :int(RSV_DIM + fix_len)], torch.zeros_like(z[:, int(RSV_DIM + fix_len):])], dim = -1)
-                print(z_prior)
-                exit()
             else:
                 beta = torch.sigmoid(self.clip_beta(p_vnd_pr[:,RSV_DIM:]))
                 ONES = torch.ones_like(beta[:,0:1])

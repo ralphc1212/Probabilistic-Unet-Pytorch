@@ -42,12 +42,14 @@ def test(dataloader=None, savefig=False):
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
-        net.sample(testing=True, fix_len=1)
-        elbo = net.elbo(mask, hard=hard)
-        test_loss -= elbo.item()
+        recons = net.sample(testing=True, fix_len=1)
+        print(recons.shape)
+        exit()
+        # elbo = net.elbo(mask, hard=hard)
+        # test_loss -= elbo.item()
 
-    test_loss /= len(test_loader)
-    print(TAG + 'Testing elbo: ', test_loss)
+    # test_loss /= len(test_loader)
+    # print(TAG + 'Testing elbo: ', test_loss)
     return test_loss
 
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1_hard-0/'
