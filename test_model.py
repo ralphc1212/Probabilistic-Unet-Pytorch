@@ -64,7 +64,7 @@ def test(dataloader=None, savefig=False):
     # print(TAG + 'Testing elbo: ', test_loss)
     return test_loss
 
-path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1_hard-0/'
+path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
 image_path = path + 'prediction_images/'
 hard = False
 
