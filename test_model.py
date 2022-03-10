@@ -19,7 +19,7 @@ no_convs_fcomb = 4
 beta = 10.
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/')
+dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/', plot=True)
 
 # num of cross validation
 K = 3
