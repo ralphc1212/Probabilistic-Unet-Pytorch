@@ -75,4 +75,4 @@ for i in range(K):
 
     net.load_state_dict(torch.load(path + str(i) + '.pth').state_dict())
 
-    te_loss = test(savefig=True)
+    te_loss = test(dataloader=test_loader,savefig=True)
