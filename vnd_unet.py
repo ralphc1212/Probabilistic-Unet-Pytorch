@@ -259,8 +259,6 @@ class VNDUnet(nn.Module):
                 s_vnd = torch.cat([torch.ones_like(p_vnd_pr[:,:RSV_DIM]), mask1], dim = -1)
 
                 z_prior = (eps * std + mu_pr) * s_vnd
-            
-            print(z_prior)
 
         return self.fcomb.forward(self.unet_features, z_prior)
 
