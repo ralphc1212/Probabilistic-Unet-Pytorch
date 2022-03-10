@@ -36,7 +36,7 @@ for i in range(K):
             split.append(line)
     splits.append(split)
 
-def test(dataloader=None, savefig=False):
+def test(fold=0, dataloader=None, savefig=False):
     net.eval()
     test_loss = 0
     for step, (patch, mask, _) in enumerate(dataloader): 
@@ -49,21 +49,23 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=False)
         recons = []
-        for i in range(nsamples):
-            recons.append(net.sample(testing=True, fix_len=1))
+
+        for fix_len_ in range(4)
+            for i in range(nsamples):
+                recons.append(net.sample(testing=True, fix_len=fix_len_+1))
 
         recons = torch.cat(recons)
 
         torchvision.utils.save_image(patch, 
-                        image_path + 'patch_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + 'patch_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)
         torchvision.utils.save_image(mask, 
-                        image_path + 'mask_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + 'mask_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)    
         torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-                        image_path + 'recons_' + str(step) + '.png',
+                        image_path + str(fold) + '/' + 'recons_' + str(step) + '.png',
                         normalize=True,
                         nrow=32)
         exit()
@@ -85,6 +87,9 @@ if not os.path.isdir(image_path):
 results = {}
 # iterate the K fold 
 for i in range(K):
+    if not os.path.isdir(image_path + str(i) + '/'):
+        os.makedirs(image_path + str(i) + '/')
+
     # Dataloaders
     TAG = '({}-fold-{}) '.format(K, i+1) 
     train_indices, val_indices, test_indices = splits[i]
@@ -104,4 +109,4 @@ for i in range(K):
 
     net.load_state_dict(torch.load(path + str(i) + '.pth').state_dict())
 
-    te_loss = test(dataloader=test_loader,savefig=True)
+    te_loss = test(fold=i, dataloader=test_loader, savefig=True)
