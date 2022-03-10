@@ -237,7 +237,8 @@ class VNDUnet(nn.Module):
         else:
             #You can choose whether you mean a sample or the mean here. For the GED it is important to take a sample.
             #z_prior = self.prior_latent_space.base_dist.loc 
-            mu_pr, log_var_pr, p_vnd_pr = self.prior_params
+            # mu_pr, log_var_pr, p_vnd_pr = self.prior_params
+            mu_pr, log_var_pr, p_vnd_pr = self.posterior_params
 
             std = torch.exp(0.5 * log_var_pr)
             eps = torch.randn_like(std)
