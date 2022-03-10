@@ -3,7 +3,7 @@ import torch
 import torchvision
 import numpy as np
 from torch.utils.data import DataLoader
-from torch.utils.data.sampler import SubsetRandomSampler
+from torch.utils.data.sampler import SubsetRandomSampler, SequentialSampler
 from load_LIDC_data import LIDC_IDRI
 # from probabilistic_unet import ProbabilisticUnet
 from vnd_unet import VNDUnet
@@ -94,8 +94,8 @@ for i in range(K):
     TAG = '({}-fold-{}) '.format(K, i+1) 
     train_indices, val_indices, test_indices = splits[i]
 
-    val_sampler = SubsetRandomSampler(val_indices)
-    test_sampler = SubsetRandomSampler(test_indices)
+    val_sampler = SequentialSampler(val_indices)
+    test_sampler = SequentialSampler(test_indices)
 
     val_loader = DataLoader(dataset, batch_size=32, sampler=val_sampler)
     test_loader = DataLoader(dataset, batch_size=32, sampler=test_sampler)
