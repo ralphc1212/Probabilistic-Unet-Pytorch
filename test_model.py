@@ -45,7 +45,7 @@ def test(dataloader=None, savefig=False):
         mask = mask.to(device)
 
         mask = mask.permute(1, 0, 2, 3)
-        mask = mask.view(-1, *mask.shape[2:])
+        mask = mask.reshape(-1, *mask.shape[2:])
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=False)
         recons = []
