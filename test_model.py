@@ -52,7 +52,7 @@ def test(fold=0, dataloader=None, savefig=False):
 
         for fix_len_ in range(4):
             for i in range(nsamples):
-                recons.append(net.sample(testing=True, fix_len=None))
+                recons.append(net.sample(testing=True, fix_len=fix_len_))
 
         recons = torch.cat(recons)
 
