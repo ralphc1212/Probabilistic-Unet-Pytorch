@@ -52,7 +52,7 @@ def test(fold=0, dataloader=None, savefig=False):
 
         for fix_len_ in range(4):
             for i in range(nsamples):
-                recons.append(net.sample(testing=True, fix_len=fix_len_+1))
+                recons.append(net.sample(testing=True, fix_len=None))
 
         recons = torch.cat(recons)
 
@@ -78,7 +78,7 @@ def test(fold=0, dataloader=None, savefig=False):
     return test_loss
 
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
-image_path = path + 'prediction_images/'
+image_path = path + 'prediction_images_random/'
 hard = False
 
 if not os.path.isdir(image_path):
