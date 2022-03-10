@@ -44,15 +44,15 @@ def test(dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
         recons = net.sample(testing=True, fix_len=1)
-        torchvision.save_image(patch, 
+        torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)
-        torchvision.save_image(mask, 
+        torchvision.utils.save_image(mask, 
                         image_path+'mask_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)    
-        torchvision.save_image(recons, 
+        torchvision.utils.save_image(recons, 
                         image_path+'recons_' + str(step) + '.png',
                         normalize=True,
                         nrow=12)
