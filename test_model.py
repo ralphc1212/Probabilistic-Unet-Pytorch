@@ -30,28 +30,15 @@ for i in range(K):
             split.append(line)
     splits.append(split)
 
-def validation(loss_dict):
-    net.eval()
-    for step, (patch, mask, _) in enumerate(val_loader): 
-        patch = patch.to(device)
-        mask = mask.to(device)
-        mask = torch.unsqueeze(mask,1)
-        net.forward(patch, mask, training=True)
-        elbo = net.elbo(mask)
-        loss_dict['val_elbo'] -= elbo.item()
-
-    loss_dict['val_elbo'] /= len(val_loader)
-    return loss_dict
-
-def test(savefig=False):
+def test(dataloader=None, savefig=False):
     net.eval()
     test_loss = 0
-    for step, (patch, mask, _) in enumerate(test_loader): 
+    for step, (patch, mask, _) in enumerate(dataloader): 
         patch = patch.to(device)
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
-        elbo = net.elbo(mask)
+        elbo = net.elbo(mask, hard=hard)
         test_loss -= elbo.item()
 
         print(mask.shape)
@@ -59,7 +46,8 @@ def test(savefig=False):
     print(TAG + 'Testing elbo: ', test_loss)
     return test_loss
 
-path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1/summary.csv'
+path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-0_lr-0.0001_seed-1_hard-0/'
+hard = False
 
 results = {}
 # iterate the K fold 
@@ -81,6 +69,6 @@ for i in range(K):
     net = VNDUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
     net.to(device)
 
-    net.load_stat_dict(torch.load('path'))
+    net.load_stat_dict(torch.load(path))
 
     te_loss = test(savefig=True)

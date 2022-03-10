@@ -179,7 +179,7 @@ TAU = 1.
 PI = 0.8
 RSV_DIM = 2
 EPS = 1e-8
-SAMPLE_LEN = 1.
+LATENT_LEN = 1.
 
 class VNDUnet(nn.Module):
     """
@@ -243,21 +243,25 @@ class VNDUnet(nn.Module):
             std = torch.exp(0.5 * log_var_pr)
             eps = torch.randn_like(std)
 
-            # if fix_len:
+            if fix_len:
+                z = eps * std + mu_pr
+                print(z)
+                z_prior = torch.cat([z[:, :int(RSV_DIM + LATENT_LEN)], torch.zeros_like(z[:, int(RSV_DIM + LATENT_LEN):])], dim = -1)
+                print(z_prior)
+                exit()
+            else:
+                beta = torch.sigmoid(self.clip_beta(p_vnd_pr[:,RSV_DIM:]))
+                ONES = torch.ones_like(beta[:,0:1])
+                qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
+                s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=False)
 
-            # else:
-            #     beta = torch.sigmoid(self.clip_beta(p_vnd_pr[:,RSV_DIM:]))
-            #     ONES = torch.ones_like(beta[:,0:1])
-            #     qv = torch.cat([ONES, torch.cumprod(beta, dim=1)], dim = -1) * torch.cat([1 - beta, ONES], dim = -1)
-            #     s_vnd = F.gumbel_softmax(qv, tau=TAU, hard=False)
+                cumsum = torch.cumsum(s_vnd, dim=1)
+                dif = cumsum - s_vnd
+                mask0 = dif[:, 1:]
+                mask1 = 1. - mask0
+                s_vnd = torch.cat([torch.ones_like(p_vnd_pr[:,:RSV_DIM]), mask1], dim = -1)
 
-            #     cumsum = torch.cumsum(s_vnd, dim=1)
-            #     dif = cumsum - s_vnd
-            #     mask0 = dif[:, 1:]
-            #     mask1 = 1. - mask0
-            #     s_vnd = torch.cat([torch.ones_like(p_vnd_pr[:,:RSV_DIM]), mask1], dim = -1)
-
-            z_prior = (eps * std + mu_pr) * s_vnd
+                z_prior = (eps * std + mu_pr) * s_vnd
 
         return self.fcomb.forward(self.unet_features, z_prior)
 
