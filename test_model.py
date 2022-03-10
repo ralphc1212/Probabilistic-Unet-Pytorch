@@ -46,7 +46,7 @@ def test(dataloader=None, savefig=False):
         recons = net.sample(testing=True, fix_len=1)
         print(mask[0])
         print(patch[0])
-        print(recons[0])
+        print(torch.sigmoid(recons[0]) > 0.5)
         exit()
         torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
