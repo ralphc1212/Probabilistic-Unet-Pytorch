@@ -73,6 +73,6 @@ for i in range(K):
     net = VNDUnet(input_channels=1, num_classes=1, num_filters=num_filters, latent_dim=latent_dim, no_convs_fcomb=no_convs_fcomb, beta=beta)
     net.to(device)
 
-    net.load_state_dict(torch.load(path))
+    net.load_state_dict(torch.load(path + str(i) + '.pth'))
 
     te_loss = test(savefig=True)
