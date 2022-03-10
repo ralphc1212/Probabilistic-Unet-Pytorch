@@ -56,7 +56,7 @@ def test(fold=0, dataloader=None, savefig=False):
 
         recons = torch.cat(recons)
 
-        print(torch.sigmoid(recons)[:4])
+        print(torch.sigmoid(recons)[:4,1,64,64])
         exit()
 
         torchvision.utils.save_image(patch, 
