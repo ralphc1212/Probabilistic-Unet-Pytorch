@@ -17,6 +17,7 @@ num_filters = [32,64,128,192]
 latent_dim = 6
 no_convs_fcomb = 4
 beta = 10.
+nsamples = 4
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/', plot=True)
@@ -45,10 +46,13 @@ def test(dataloader=None, savefig=False):
 
         mask = mask.view(-1, *mask.shape[2:])
         mask = torch.unsqueeze(mask,1)
-        print(mask.shape)
-        net.forward(patch, mask, training=True)
-        recons = net.sample(testing=True, fix_len=1)
+        net.forward(patch, mask, training=False)
+        recons = []
+        for i in range(nsamples):
+            recons.append(net.sample(testing=True, fix_len=1))
 
+        recons = torch.cat(recons)
+        recons = recons.view(-1, *recons.shape[2:])
         torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
                         normalize=True,
