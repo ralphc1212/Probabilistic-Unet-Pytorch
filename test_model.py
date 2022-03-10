@@ -47,15 +47,15 @@ def test(dataloader=None, savefig=False):
         torchvision.utils.save_image(patch, 
                         image_path+'patch_' + str(step) + '.png',
                         normalize=True,
-                        nrow=12)
+                        nrow=32)
         torchvision.utils.save_image(mask, 
                         image_path+'mask_' + str(step) + '.png',
                         normalize=True,
-                        nrow=12)    
+                        nrow=32)    
         torchvision.utils.save_image(recons, 
                         image_path+'recons_' + str(step) + '.png',
                         normalize=True,
-                        nrow=12)
+                        nrow=32)
         exit()
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
