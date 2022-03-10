@@ -42,10 +42,10 @@ def test(dataloader=None, savefig=False):
         mask = mask.to(device)
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
+        net.sample(testing=True, fix_len=1)
         elbo = net.elbo(mask, hard=hard)
         test_loss -= elbo.item()
 
-        print(mask.shape)
     test_loss /= len(test_loader)
     print(TAG + 'Testing elbo: ', test_loss)
     return test_loss

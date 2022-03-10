@@ -179,7 +179,6 @@ TAU = 1.
 PI = 0.8
 RSV_DIM = 2
 EPS = 1e-8
-LATENT_LEN = 1.
 
 class VNDUnet(nn.Module):
     """
@@ -246,7 +245,7 @@ class VNDUnet(nn.Module):
             if fix_len:
                 z = eps * std + mu_pr
                 print(z)
-                z_prior = torch.cat([z[:, :int(RSV_DIM + LATENT_LEN)], torch.zeros_like(z[:, int(RSV_DIM + LATENT_LEN):])], dim = -1)
+                z_prior = torch.cat([z[:, :int(RSV_DIM + fix_len)], torch.zeros_like(z[:, int(RSV_DIM + fix_len):])], dim = -1)
                 print(z_prior)
                 exit()
             else:
