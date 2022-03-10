@@ -48,7 +48,8 @@ class LIDC_IDRI(Dataset):
         image = np.expand_dims(self.images[index], axis=0)
 
         if self.plot:
-            print(self.labels[index])
+            print(len(self.labels[index]))
+            print(self.labels[index][0].shape)
             label = self.labels[index].astype(float)
         else:
             #Randomly select one of the four labels for this image
