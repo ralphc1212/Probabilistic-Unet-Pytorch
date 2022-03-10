@@ -42,7 +42,7 @@ def test(dataloader=None, savefig=False):
 
         patch = patch.to(device)
         mask = mask.to(device)
-        print(mask.shape)
+        print(torch.cat(mask).shape)
         exit()
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=True)
