@@ -39,25 +39,27 @@ def test(dataloader=None, savefig=False):
     net.eval()
     test_loss = 0
     for step, (patch, mask, _) in enumerate(dataloader): 
-        patch = patch.to(device)
-        mask = mask.to(device)
-        mask = torch.unsqueeze(mask,1)
-        net.forward(patch, mask, training=True)
-        recons = net.sample(testing=True, fix_len=1)
+        print(_)
+        # patch = patch.to(device)
+        # mask = mask.to(device)
+        # mask = torch.unsqueeze(mask,1)
+        # net.forward(patch, mask, training=True)
+        # recons = net.sample(testing=True, fix_len=1)
 
-        torchvision.utils.save_image(patch, 
-                        image_path+'patch_' + str(step) + '.png',
-                        normalize=True,
-                        nrow=32)
-        torchvision.utils.save_image(mask, 
-                        image_path+'mask_' + str(step) + '.png',
-                        normalize=True,
-                        nrow=32)    
-        torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-                        image_path+'recons_' + str(step) + '.png',
-                        normalize=True,
-                        nrow=32)
-        exit()
+        # torchvision.utils.save_image(patch, 
+        #                 image_path+'patch_' + str(step) + '.png',
+        #                 normalize=True,
+        #                 nrow=32)
+        # torchvision.utils.save_image(mask, 
+        #                 image_path+'mask_' + str(step) + '.png',
+        #                 normalize=True,
+        #                 nrow=32)    
+        # torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
+        #                 image_path+'recons_' + str(step) + '.png',
+        #                 normalize=True,
+        #                 nrow=32)
+        # exit()
+
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
 
