@@ -131,7 +131,7 @@ for i in range(K):
 
     patches, masks, recons = test(fold=i, dataloader=test_loader, savefig=False)
 
-    dist_dict = get_energy_distance_components(patches[0], masks[0], 2)
+    dist_dict = get_energy_distance_components(mask[0:4], masks[0:16], 2)
     print(dist_dict)
     exit()
 
