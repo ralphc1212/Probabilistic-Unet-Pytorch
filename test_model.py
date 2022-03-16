@@ -10,6 +10,7 @@ from vnd_unet import VNDUnet
 from utils import l2_regularisation
 import csv
 import time
+from metric import get_energy_distance_components, calc_energy_distances
 
 DATA = 'LIDC_IDRI'
 
