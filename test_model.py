@@ -129,8 +129,9 @@ for i in range(K):
 
     print(masks.shape)
     dist_dict = get_energy_distance_components(masks[0:4], recons[0:16], 2)
-    
-    print(dist_dict)
+    dist = calc_energy_distances(dist_dict)
+    print(dist)
+    # print(dist_dict)
     exit()
 
 
