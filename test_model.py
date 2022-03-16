@@ -130,15 +130,14 @@ for i in range(K):
     total_dist_dict = {'YS': [], 'SS': [], 'YY': []}
     for img_idx in range(patches.shape[0]):
         dist_dict = get_energy_distance_components(masks[img_idx:(img_idx + 1)], recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
-        total_dist_dict['YS'].append(dist_dict['YS'])
-        total_dist_dict['SS'].append(dist_dict['SS'])
-        total_dist_dict['YY'].append(dist_dict['YY'])
+        total_dist_dict['YS'].append(np.expand_dims(dist_dict['YS'], 0))
+        total_dist_dict['SS'].append(np.expand_dims(dist_dict['SS'], 0))
+        total_dist_dict['YY'].append(np.expand_dims(dist_dict['YY'], 0))
 
     total_dist_dict['YS'] = np.concatenate(total_dist_dict['YS'])
     total_dist_dict['SS'] = np.concatenate(total_dist_dict['SS'])
     total_dist_dict['YY'] = np.concatenate(total_dist_dict['YY'])
 
-    print(total_dist_dict['YS'].shape)
     dist = calc_energy_distances(total_dist_dict)
     print(dist)
     # print(dist_dict)
