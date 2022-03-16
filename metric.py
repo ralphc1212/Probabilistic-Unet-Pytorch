@@ -106,6 +106,10 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
             d_matrix_SS[i, j] = 1. - iou
             d_matrix_SS[j, i] = 1. - iou
 
+    print(d_matrix_YS.shape)
+    print(d_matrix_SS.shape)
+    print(d_matrix_YY.shape)
+
     return {'YS': d_matrix_YS, 'SS': d_matrix_SS, 'YY': d_matrix_YY}
 
 
@@ -149,7 +153,6 @@ def calc_energy_distances(d_matrices, num_samples=None, probability_weighted=Fal
     else:
 
        mean_d_YS = np.nanmean(d_matrices['YS'], axis=-1)
-       print(mean_d_YS.shape)
        d_YS = np.mean(mean_d_YS, axis=(1,2))
 
        mean_d_SS = np.nanmean(d_matrices['SS'], axis=-1)
