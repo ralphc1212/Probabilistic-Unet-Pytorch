@@ -39,6 +39,10 @@ for i in range(K):
 def test(fold=0, dataloader=None, savefig=False):
     net.eval()
     test_loss = 0
+
+    patches = []
+    masks = []
+    recons = []
     for step, (patch, mask, _) in enumerate(dataloader): 
 
         patch = patch.to(device)
@@ -48,26 +52,42 @@ def test(fold=0, dataloader=None, savefig=False):
         mask = mask.reshape(-1, *mask.shape[2:])
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=False)
-        recons = []
+
+
+        recon = []
 
         for fix_len_ in range(4):
             for i in range(nsamples):
-                recons.append(net.sample(testing=True, fix_len=fix_len_))
+                recon.append(net.sample(testing=True, fix_len=fix_len_))
 
-        recons = torch.cat(recons)
+        recon = torch.cat(recon)
 
-        torchvision.utils.save_image(patch, 
-                        image_path + str(fold) + '/' + str(step) + '_patch' + '.png',
-                        normalize=True,
-                        nrow=32)
-        torchvision.utils.save_image(mask, 
-                        image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
-                        normalize=True,
-                        nrow=32)    
-        torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-                        image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
-                        normalize=True,
-                        nrow=32)
+        recon = (torch.sigmoid(recon) >= 0.5).float()
+
+        patches.append(patch.detach())
+        masks.append(mask.detach())
+        recons.append(recon.detach())
+
+    patches = torch.cat(patches)
+    masks = torch.cat(masks)
+    recons = torch.cat(recons)
+
+    print(patches.shape)
+    print(masks.shape)
+    print(recons.shape)
+
+        # torchvision.utils.save_image(patch, 
+        #                 image_path + str(fold) + '/' + str(step) + '_patch' + '.png',
+        #                 normalize=True,
+        #                 nrow=32)
+        # torchvision.utils.save_image(mask, 
+        #                 image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
+        #                 normalize=True,
+        #                 nrow=32)    
+        # torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
+        #                 image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
+        #                 normalize=True,
+        #                 nrow=32)
 
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
@@ -76,12 +96,15 @@ def test(fold=0, dataloader=None, savefig=False):
     # print(TAG + 'Testing elbo: ', test_loss)
     return test_loss
 
+
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
 image_path = path + 'prediction_images/'
 hard = False
 
+
 if not os.path.isdir(image_path):
     os.makedirs(image_path)
+
 
 results = {}
 # iterate the K fold 
