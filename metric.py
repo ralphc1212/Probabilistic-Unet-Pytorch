@@ -106,6 +106,7 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
             d_matrix_SS[i, j] = 1. - iou
             d_matrix_SS[j, i] = 1. - iou
 
+    print(d_matrix_YS)
     print(d_matrix_YS.shape)
     print(d_matrix_SS.shape)
     print(d_matrix_YY.shape)
