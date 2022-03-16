@@ -139,7 +139,7 @@ for i in range(K):
     total_dist_dict['YY'] = np.concatenate(total_dist_dict['YY'])
 
     dist = calc_energy_distances(total_dist_dict)
-    print(dist)
+    print(dist.mean())
     # print(dist_dict)
     exit()
 
