@@ -129,7 +129,7 @@ for i in range(K):
 
     total_dist_dict = {'YS': [], 'SS': [], 'YY': []}
     for img_idx in range(patches.shape[0]):
-        dist_dict = get_energy_distance_components(masks[img_idx], recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
+        dist_dict = get_energy_distance_components(masks[img_idx:(img_idx + 1)], recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
         total_dist_dict['YS'].append(dist_dict['YS'])
         total_dist_dict['SS'].append(dist_dict['SS'])
         total_dist_dict['YY'].append(dist_dict['YY'])
