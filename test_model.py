@@ -138,6 +138,7 @@ for i in range(K):
     total_dist_dict['SS'] = np.concatenate(total_dist_dict['SS'])
     total_dist_dict['YY'] = np.concatenate(total_dist_dict['YY'])
 
+    print(total_dist_dict['YS'].shape)
     dist = calc_energy_distances(total_dist_dict)
     print(dist)
     # print(dist_dict)
