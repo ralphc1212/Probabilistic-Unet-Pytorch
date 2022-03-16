@@ -109,6 +109,7 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
     print(d_matrix_YS.shape)
     print(d_matrix_SS.shape)
     print(d_matrix_YY.shape)
+    exit()
 
     return {'YS': d_matrix_YS, 'SS': d_matrix_SS, 'YY': d_matrix_YY}
 
