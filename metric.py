@@ -181,3 +181,33 @@ def metrics_from_conf_matrix(conf_matrix):
             metrics['iou'][c] = np.nan
 
     return metrics
+
+
+def get_mode_statistics(label_switches, exp_modes=5):
+    """
+    Calculate a binary matrix of switches as well as a vector of mode probabilities.
+    :param label_switches: dict specifying class names and their individual sampling probabilities
+    :param exp_modes: integer, number of independently switchable classes
+    :return: dict
+    """
+    num_modes = 2 ** exp_modes
+
+    # assemble a binary matrix of switch decisions
+    switch = np.zeros(shape=(num_modes, 5), dtype=np.uint8)
+    for i in range(exp_modes):
+        switch[:,i] = 2 ** i * (2 ** (exp_modes - 1 - i) * [0] + 2 ** (exp_modes - 1 - i) * [1])
+
+    # calculate the probability for each individual mode
+    mode_probs = np.zeros(shape=(num_modes,), dtype=np.float32)
+    for mode in range(num_modes):
+        prob = 1.
+        for i, c in enumerate(label_switches.keys()):
+            if switch[mode, i]:
+                prob *= label_switches[c]
+            else:
+                prob *= 1. - label_switches[c]
+        mode_probs[mode] = prob
+    assert np.sum(mode_probs) == 1.
+
+    return {'switch': switch, 'mode_probs': mode_probs}
+
