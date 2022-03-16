@@ -35,10 +35,10 @@ def calc_confusion(labels, samples, class_ixs, loss_mask=None):
         pred_ = (samples == c).astype(np.uint8)
         labels_ = (labels == c).astype(np.uint8)
 
-        conf_matrix[i,0] = int(((pred_ != 0) * (labels_ != 0) * (loss_mask != 1)).sum()) # TP
-        conf_matrix[i,1] = int(((pred_ != 0) * (labels_ == 0) * (loss_mask != 1)).sum()) # FP
-        conf_matrix[i,2] = int(((pred_ == 0) * (labels_ == 0) * (loss_mask != 1)).sum()) # TN
-        conf_matrix[i,3] = int(((pred_ == 0) * (labels_ != 0) * (loss_mask != 1)).sum()) # FN
+        conf_matrix[i, 0] = int(((pred_ != 0) * (labels_ != 0) * (loss_mask != 1)).sum()) # TP
+        conf_matrix[i, 1] = int(((pred_ != 0) * (labels_ == 0) * (loss_mask != 1)).sum()) # FP
+        conf_matrix[i, 2] = int(((pred_ == 0) * (labels_ == 0) * (loss_mask != 1)).sum()) # TN
+        conf_matrix[i, 3] = int(((pred_ == 0) * (labels_ != 0) * (loss_mask != 1)).sum()) # FN
 
     return conf_matrix
 
@@ -105,12 +105,6 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
             iou = metrics_from_conf_matrix(conf_matrix)['iou']
             d_matrix_SS[i, j] = 1. - iou
             d_matrix_SS[j, i] = 1. - iou
-
-    print(d_matrix_YS)
-    print(d_matrix_YS.shape)
-    print(d_matrix_SS.shape)
-    print(d_matrix_YY.shape)
-    exit()
 
     return {'YS': d_matrix_YS, 'SS': d_matrix_SS, 'YY': d_matrix_YY}
 
