@@ -24,11 +24,10 @@ def calc_confusion(labels, samples, class_ixs, loss_mask=None):
     else:
         raise TypeError('arg class_ixs needs to be int or list, not {}.'.format(type(class_ixs)))
 
-    print(labels.shape)
-    print(samples.shape)
     if loss_mask is None:
-        shp = labels.shape
-        loss_mask = np.zeros(shape=(shp[0], 1, shp[2], shp[3]))
+        # shp = labels.shape
+        # loss_mask = np.zeros(shape=(shp[0], 1, shp[2], shp[3]))
+        loss_mask = np.zeros_like(labels)
 
     conf_matrix = np.zeros(shape=(num_classes, 4), dtype=np.float32)
     for i,c in enumerate(class_ixs):
