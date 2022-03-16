@@ -127,11 +127,18 @@ for i in range(K):
 
     patches, masks, recons = test(fold=i, dataloader=test_loader, savefig=False)
 
-    print(masks.shape)
-    print(recons.shape)
-    exit()
-    dist_dict = get_energy_distance_components(masks[0:4], recons[0:16], 2)
-    dist = calc_energy_distances(dist_dict)
+    total_dist_dict = {'YS': [], 'SS': [], 'YY': []}
+    for img_idx in range(patches.shape[0]):
+        dist_dict = get_energy_distance_components(masks[img_idx], recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
+        total_dist_dict['YS'].append(dist_dict['YS'])
+        total_dist_dict['SS'].append(dist_dict['SS'])
+        total_dist_dict['YY'].append(dist_dict['YY'])
+
+    total_dist_dict['YS'] = torch.cat(total_dist_dict['YS'])
+    total_dist_dict['SS'] = torch.cat(total_dist_dict['SS'])
+    total_dist_dict['YY'] = torch.cat(total_dist_dict['YY'])
+
+    dist = calc_energy_distances(total_dist_dict)
     print(dist)
     # print(dist_dict)
     exit()
