@@ -64,6 +64,20 @@ def test(fold=0, dataloader=None, savefig=False):
 
         recon = (torch.sigmoid(recon) >= 0.5).float()
 
+        if savefig:
+            torchvision.utils.save_image(patch, 
+                            image_path + str(fold) + '/' + str(step) + '_patch' + '.png',
+                            normalize=True,
+                            nrow=32)
+            torchvision.utils.save_image(mask, 
+                            image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
+                            normalize=True,
+                            nrow=32)    
+            torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
+                            image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
+                            normalize=True,
+                            nrow=32)
+
         patches.append(patch.detach())
         masks.append(mask.detach())
         recons.append(recon.detach())
@@ -72,29 +86,12 @@ def test(fold=0, dataloader=None, savefig=False):
     masks = torch.cat(masks)
     recons = torch.cat(recons)
 
-    print(patches.shape)
-    print(masks.shape)
-    print(recons.shape)
-
-        # torchvision.utils.save_image(patch, 
-        #                 image_path + str(fold) + '/' + str(step) + '_patch' + '.png',
-        #                 normalize=True,
-        #                 nrow=32)
-        # torchvision.utils.save_image(mask, 
-        #                 image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
-        #                 normalize=True,
-        #                 nrow=32)    
-        # torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
-        #                 image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
-        #                 normalize=True,
-        #                 nrow=32)
-
         # elbo = net.elbo(mask, hard=hard)
         # test_loss -= elbo.item()
 
     # test_loss /= len(test_loader)
     # print(TAG + 'Testing elbo: ', test_loss)
-    return test_loss
+    return patches, masks, recons
 
 
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
@@ -131,4 +128,10 @@ for i in range(K):
 
     net.load_state_dict(torch.load(path + str(i) + '.pth').state_dict())
 
-    te_loss = test(fold=i, dataloader=test_loader, savefig=True)
+    patches, masks, recons = test(fold=i, dataloader=test_loader, savefig=True)
+
+    dist_dict = get_energy_distance_components(patches[0], masks[0], 2)
+    print(dist_dict)
+    exit()
+
+
