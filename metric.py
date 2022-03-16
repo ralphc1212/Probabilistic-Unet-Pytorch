@@ -147,7 +147,9 @@ def calc_energy_distances(d_matrices, num_samples=None, probability_weighted=Fal
        d_YY = np.sum(mean_d_YY, axis=(1, 2))
 
     else:
+
        mean_d_YS = np.nanmean(d_matrices['YS'], axis=-1)
+       print(mean_d_YS.shape)
        d_YS = np.mean(mean_d_YS, axis=(1,2))
 
        mean_d_SS = np.nanmean(d_matrices['SS'], axis=-1)
