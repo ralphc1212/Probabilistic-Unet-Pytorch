@@ -134,9 +134,9 @@ for i in range(K):
         total_dist_dict['SS'].append(dist_dict['SS'])
         total_dist_dict['YY'].append(dist_dict['YY'])
 
-    total_dist_dict['YS'] = torch.cat(total_dist_dict['YS'])
-    total_dist_dict['SS'] = torch.cat(total_dist_dict['SS'])
-    total_dist_dict['YY'] = torch.cat(total_dist_dict['YY'])
+    total_dist_dict['YS'] = np.cat(total_dist_dict['YS'])
+    total_dist_dict['SS'] = np.cat(total_dist_dict['SS'])
+    total_dist_dict['YY'] = np.cat(total_dist_dict['YY'])
 
     dist = calc_energy_distances(total_dist_dict)
     print(dist)
