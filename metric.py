@@ -24,6 +24,8 @@ def calc_confusion(labels, samples, class_ixs, loss_mask=None):
     else:
         raise TypeError('arg class_ixs needs to be int or list, not {}.'.format(type(class_ixs)))
 
+    print(labels.shape)
+    print(samples.shape)
     if loss_mask is None:
         shp = labels.shape
         loss_mask = np.zeros(shape=(shp[0], 1, shp[2], shp[3]))
@@ -156,6 +158,7 @@ def calc_energy_distances(d_matrices, num_samples=None, probability_weighted=Fal
        d_YY = np.nanmean(mean_d_YY, axis=(1, 2))
 
     return 2 * d_YS - d_SS - d_YY
+
 
 def metrics_from_conf_matrix(conf_matrix):
     """

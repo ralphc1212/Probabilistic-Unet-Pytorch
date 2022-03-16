@@ -54,7 +54,6 @@ def test(fold=0, dataloader=None, savefig=False):
         mask = torch.unsqueeze(mask,1)
         net.forward(patch, mask, training=False)
 
-
         recon = []
 
         for fix_len_ in range(4):
@@ -94,15 +93,12 @@ def test(fold=0, dataloader=None, savefig=False):
     # print(TAG + 'Testing elbo: ', test_loss)
     return patches, masks, recons
 
-
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
 image_path = path + 'prediction_images/'
 hard = False
 
-
 if not os.path.isdir(image_path):
     os.makedirs(image_path)
-
 
 results = {}
 # iterate the K fold 
