@@ -73,7 +73,7 @@ def test(fold=0, dataloader=None, savefig=False):
                             image_path + str(fold) + '/' + str(step) + '_mask' + '.png',
                             normalize=True,
                             nrow=32)    
-            torchvision.utils.save_image((torch.sigmoid(recons) >= 0.5).float(), 
+            torchvision.utils.save_image((torch.sigmoid(recon) >= 0.5).float(), 
                             image_path + str(fold) + '/' + str(step) + '_recons' + '.png',
                             normalize=True,
                             nrow=32)
@@ -128,7 +128,7 @@ for i in range(K):
 
     net.load_state_dict(torch.load(path + str(i) + '.pth').state_dict())
 
-    patches, masks, recons = test(fold=i, dataloader=test_loader, savefig=True)
+    patches, masks, recons = test(fold=i, dataloader=test_loader, savefig=False)
 
     dist_dict = get_energy_distance_components(patches[0], masks[0], 2)
     print(dist_dict)
