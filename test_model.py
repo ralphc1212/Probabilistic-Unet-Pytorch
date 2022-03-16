@@ -20,7 +20,7 @@ no_convs_fcomb = 4
 beta = 10.
 nsamples = 4
 
-FIX_LEN = 1
+FIX_LEN = 2
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/', plot=True)
