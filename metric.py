@@ -74,7 +74,7 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
         for i in range(num_samples):
             conf_matrix = calc_confusion(gt_seg_modes[mode], seg_samples[i],
                                                         loss_mask=ignore_mask, class_ixs=eval_class_ids)
-            iou = training_utils.metrics_from_conf_matrix(conf_matrix)['iou']
+            iou = metrics_from_conf_matrix(conf_matrix)['iou']
             d_matrix_YS[mode, i] = 1. - iou
 
         ###########################################
@@ -86,7 +86,7 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
         for mode_2 in range(mode, num_modes):
             conf_matrix = calc_confusion(gt_seg_modes[mode], gt_seg_modes[mode_2],
                                                         loss_mask=ignore_mask, class_ixs=eval_class_ids)
-            iou = training_utils.metrics_from_conf_matrix(conf_matrix)['iou']
+            iou = metrics_from_conf_matrix(conf_matrix)['iou']
             d_matrix_YY[mode, mode_2] = 1. - iou
             d_matrix_YY[mode_2, mode] = 1. - iou
 
@@ -101,7 +101,7 @@ def get_energy_distance_components(gt_seg_modes, seg_samples, eval_class_ids, ig
         for j in range(i, num_samples):
             conf_matrix = calc_confusion(seg_samples[i], seg_samples[j],
                                                         loss_mask=ignore_mask, class_ixs=eval_class_ids)
-            iou = training_utils.metrics_from_conf_matrix(conf_matrix)['iou']
+            iou = metrics_from_conf_matrix(conf_matrix)['iou']
             d_matrix_SS[i, j] = 1. - iou
             d_matrix_SS[j, i] = 1. - iou
 
