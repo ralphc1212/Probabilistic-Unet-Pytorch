@@ -91,7 +91,7 @@ def test(fold=0, dataloader=None, savefig=False):
 
     # test_loss /= len(test_loader)
     # print(TAG + 'Testing elbo: ', test_loss)
-    return patches, masks, recons
+    return patches.cpu().numpy(), masks.cpu().numpy(), recons.cpu().numpy()
 
 path = 'checkpoint/LIDC_IDRI/beta-10.0_regw-1e-05_wd-1e-06_lr-0.0001_seed-1_hard-1/'
 image_path = path + 'prediction_images/'
