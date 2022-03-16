@@ -20,6 +20,8 @@ no_convs_fcomb = 4
 beta = 10.
 nsamples = 4
 
+FIX_LEN = 1
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dataset = LIDC_IDRI(dataset_location = '/home/nandcui/data/plidc-punet/', plot=True)
 
@@ -56,9 +58,13 @@ def test(fold=0, dataloader=None, savefig=False):
 
         recon = []
 
-        for fix_len_ in range(4):
+        if savefig:
+            for fix_len_ in range(4):
+                for i in range(nsamples):
+                    recon.append(net.sample(testing=True, fix_len=fix_len_))
+        else:
             for i in range(nsamples):
-                recon.append(net.sample(testing=True, fix_len=fix_len_))
+                recon.append(net.sample(testing=True, fix_len=FIX_LEN))
 
         recon = torch.cat(recon)
 
@@ -129,7 +135,8 @@ for i in range(K):
 
     total_dist_dict = {'YS': [], 'SS': [], 'YY': []}
     for img_idx in range(patches.shape[0]):
-        dist_dict = get_energy_distance_components(masks[img_idx:(img_idx + 1)], recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
+        dist_dict = get_energy_distance_components(masks[int(img_idx * 4) : int((img_idx + 1) * 4)], 
+            recons[int(img_idx * 4) : int((img_idx + 1) * 4)], 2)
         total_dist_dict['YS'].append(np.expand_dims(dist_dict['YS'], 0))
         total_dist_dict['SS'].append(np.expand_dims(dist_dict['SS'], 0))
         total_dist_dict['YY'].append(np.expand_dims(dist_dict['YY'], 0))
