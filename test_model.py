@@ -148,6 +148,4 @@ for i in range(K):
     dist = calc_energy_distances(total_dist_dict)
     print(dist.mean())
     # print(dist_dict)
-    exit()
-
 
