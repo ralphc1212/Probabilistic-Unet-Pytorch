@@ -116,10 +116,6 @@ for i in range(K):
     TAG = '({}-fold-{}) '.format(K, i+1) 
     train_indices, val_indices, test_indices = splits[i]
 
-    print(len(train_indices))
-    print(len(val_indices))
-    print(len(test_indices))
-    exit()
     val_sampler = SequentialSampler(val_indices)
     test_sampler = SequentialSampler(test_indices)
 
